@@ -9,6 +9,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -53,6 +54,9 @@ public class CommonsEntityProvider extends AbstractEntityProvider implements Req
     private CommonsSecurityManager commonsSecurityManager;
     private RequestGetter requestGetter;
     private SakaiProxy sakaiProxy;
+
+    private final static List<String> contentTypes
+        = Arrays.asList("image/png", "image/jpg", "image/jpeg", "image/gif");
 
     public Object getSampleEntity() {
         return new Post();
@@ -421,6 +425,26 @@ public class CommonsEntityProvider extends AbstractEntityProvider implements Req
         } catch (IOException ioe) {
             throw new EntityException("Failed to download url contents", "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @EntityCustomAction(action = "uploadImage", viewKey = EntityView.VIEW_NEW)
+    public String uploadImage(EntityView view, Map<String, Object> params) {
+
+        String userId = getCheckedUser();
+
+        String siteId = (String) params.get("siteId");
+        FileItem fileItem = (FileItem) params.get("imageFile");
+        String contentType = fileItem.getContentType();
+        if (!contentTypes.contains(contentType)) {
+            throw new EntityException("Invalid image type supplied.", "", HttpServletResponse.SC_BAD_REQUEST);
+        }
+        String url = sakaiProxy.storeFile(fileItem, siteId);
+
+        if (url == null) {
+            throw new EntityException("Failed to save file", "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return url;
     }
 
     private String getCheckedUser() throws EntityException {

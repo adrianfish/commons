@@ -96,15 +96,17 @@ commons.switchState = function (state, arg) {
             var editorPostButton = $('#commons-editor-post-button');
             var editorCancelButton = $('#commons-editor-cancel-button');
             var editorLinkButton = $('#commons-editor-link-button');
+            var editorImageButton = $('#commons-editor-image-button');
 
             editor.click(function (e) {
 
                 if (this.innerHTML == commons.i18n.post_editor_initial_text) {
                     this.innerHTML = '';
                     $('#commons-editor-post-button').prop('disabled', false);
-                    editorLinkButton.prop('disabled', false);
-                    editorCancelButton.prop('disabled', false);
                     editorPostButton.prop('disabled', false);
+                    editorCancelButton.prop('disabled', false);
+                    editorLinkButton.prop('disabled', false);
+                    editorImageButton.prop('disabled', false);
                 }
             }).on('paste', function (e) {
 
@@ -128,6 +130,8 @@ commons.switchState = function (state, arg) {
                         editorPostButton.prop('disabled', true);
                         editorCancelButton.prop('disabled', true);
                         editorLinkButton.prop('disabled', true);
+                        editorImageButton.prop('disabled', true);
+                        fileField.val('');
 
                         var newPlaceholderId = 'commons-post-' + post.id;
 
@@ -148,7 +152,7 @@ commons.switchState = function (state, arg) {
 
             var textField = $('#commons-link-dialog-text');
 
-            $('#commons-editor-link-button').qtip({
+            editorLinkButton.qtip({
                 suppress: false,
 				content: { text: $('#commons-link-dialog') },
 				style: { classes: 'commons-qtip qtip-shadow' },
@@ -176,7 +180,7 @@ commons.switchState = function (state, arg) {
                 urlField.val('');
                 textField.val('');
                 thumbnailCheckbox.prop('checked', false);
-                $('#commons-editor-link-button').qtip('api').hide();
+                editorLinkButton.qtip('api').hide();
             });
 
             $('#commons-link-dialog-cancel-button').click(function (e) {
@@ -184,11 +188,49 @@ commons.switchState = function (state, arg) {
                 urlField.val('');
                 textField.val('');
                 thumbnailCheckbox.prop('checked', false);
-                $('#commons-editor-link-button').qtip('api').hide();
+                editorLinkButton.qtip('api').hide();
             });
 
             urlField.keydown(function (e) {
                 linkInsertButton.prop('disabled', false);
+            });
+
+            editorImageButton.qtip({
+                suppress: false,
+				content: { text: $('#commons-image-dialog') },
+				style: { classes: 'commons-qtip qtip-shadow' },
+				show: {event: 'click', delay: 0},
+				hide: {event: 'click', delay: 0}
+			});
+
+            var fileInsertButton = $('#commons-image-dialog-insert-button');
+            var fileField = $('#commons-image-dialog-file');
+
+            fileInsertButton.click(function (e) {
+
+                var file = fileField[0].files[0];
+
+                var formData = new FormData();
+                formData.append('siteId', commons.siteId);
+                formData.append('imageFile', file);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/direct/commons/uploadImage', true);
+                xhr.onload = function (e) {
+                    editor.append("<div><img src=\"" + xhr.responseText + "\" class=\"commons-image\" /></div>");
+                };
+                xhr.send(formData);
+                editorImageButton.qtip('api').hide();
+            });
+
+            fileField.change(function (e) {
+                fileInsertButton.prop('disabled', false);
+            });
+
+            $('#commons-image-dialog-cancel-button').click(function (e) {
+
+                fileInsertButton.prop('disabled', true);
+                fileField.val('');
+                editorImageButton.qtip('api').hide();
             });
             
             if (window.parent === window) {

@@ -18,6 +18,7 @@
         init-method="init">
 
         <property name="authzGroupService"><ref bean="org.sakaiproject.authz.api.AuthzGroupService"/></property>
+        <property name="contentHostingService"><ref bean="org.sakaiproject.content.api.ContentHostingService"/></property>
         <property name="siteService"><ref bean="org.sakaiproject.site.api.SiteService"/></property>
         <property name="serverConfigurationService"><ref bean="org.sakaiproject.component.api.ServerConfigurationService"/></property>
         <property name="sessionManager"><ref bean="org.sakaiproject.tool.api.SessionManager"/></property>

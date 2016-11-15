@@ -19,6 +19,8 @@ package org.sakaiproject.commons.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.fileupload.FileItem;
+
 import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.authz.api.*;
 import org.sakaiproject.commons.api.CommonsConstants;
@@ -26,6 +28,8 @@ import org.sakaiproject.commons.api.CommonsFunctions;
 import org.sakaiproject.commons.api.CommonsManager;
 import org.sakaiproject.commons.api.SakaiProxy;
 import org.sakaiproject.component.api.ServerConfigurationService;
+import org.sakaiproject.content.api.ContentHostingService;
+import org.sakaiproject.content.api.ContentResourceEdit;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.EntityProducer;
 import org.sakaiproject.entity.api.ResourceProperties;
@@ -55,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SakaiProxyImpl implements SakaiProxy {
 
     private AuthzGroupService authzGroupService;
+    private ContentHostingService contentHostingService;
     private EntityManager entityManager;
     private EventTrackingService eventTrackingService;
     private FunctionManager functionManager;
@@ -450,5 +455,30 @@ public class SakaiProxyImpl implements SakaiProxy {
 
     public void addObserver(Observer observer) {
         eventTrackingService.addObserver(observer);
+    }
+
+    public String storeFile(FileItem fileItem, String siteId) {
+
+        try {
+            String fileName = fileItem.getName();
+            int lastIndexOf = fileName.lastIndexOf("/");
+            if (lastIndexOf != -1 && (fileName.length() > lastIndexOf + 1)) {
+                fileName = fileName.substring(lastIndexOf + 1);
+            }
+            String suffix = "";
+            lastIndexOf = fileName.lastIndexOf(".");
+            if (lastIndexOf != -1 && (fileName.length() > lastIndexOf + 1)) {
+                suffix = fileName.substring(lastIndexOf + 1);
+                fileName = fileName.substring(0, lastIndexOf);
+            }
+            ContentResourceEdit edit
+                = contentHostingService.addResource("/group/" + siteId + "/", fileName, suffix , 2);
+            edit.setContent(fileItem.getInputStream());
+            contentHostingService.commitResource(edit);
+            return edit.getUrl();
+        } catch (Exception e) {
+            log.error("Failed to store file.", e);
+            return null;
+        }
     }
 }

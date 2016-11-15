@@ -9,7 +9,7 @@
             <button id="commons-editor-post-button" disabled="true">{{translate 'post'}}</button>
             <button id="commons-editor-cancel-button" disabled="true">{{translate 'cancel'}}</button>
             <button id="commons-editor-link-button" title="{{translate 'link_button_tooltip'}}" disabled="true"><span class="fa fa-link"></span></button>
-            <!--button id="commons-editor-image-button"><span class="fa fa-picture-o"></span></button-->
+            <button id="commons-editor-image-button" disabled="true"><span class="fa fa-picture-o"></span></button>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
         <img src="/commons-tool/images/ajax-loader.gif" />
     </div>
     <div id="commons-link-dialog">
-        <div id="commons-link-dialog-container">
+        <div class="commons-dialog-container">
             <div id="commons-link-dialog-table">
                 <div class="commons-link-dialog-row">
                     <div>{{translate 'display_text'}}</div><input type="text" id="commons-link-dialog-text" />
@@ -36,5 +36,16 @@
             </div>
             <button id="commons-link-dialog-insert-button" disabled="true">{{translate 'insert'}}</button>
             <button id="commons-link-dialog-cancel-button">{{translate 'cancel'}}</button>
+        </div>
+    </div>
+    <div id="commons-image-dialog">
+        <div class="commons-dialog-container">
+            <div id="commons-link-dialog-table">
+                <div class="commons-link-dialog-row">
+                    <div>{{translate 'choose_file'}}</div><input type="file" id="commons-image-dialog-file" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/jpg,image/gif" />
+                </div>
+            </div>
+            <button id="commons-image-dialog-insert-button" disabled="true">{{translate 'insert'}}</button>
+            <button id="commons-image-dialog-cancel-button">{{translate 'cancel'}}</button>
         </div>
     </div>

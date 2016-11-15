@@ -13,13 +13,16 @@
             font-weight: bold;
             margin-right: 5px;
         }
+    .commons-image {
+        min-width: 20px;
+        max-width: 100%;
+    }
 
 #commons-link-dialog {
     display: none;
 }
-    #commons-link-dialog-container {
-        padding: 10px;
-    }
+.commons-dialog-container {
+}
         #commons-link-dialog-table {
             display: table;
         }

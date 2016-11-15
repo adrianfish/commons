@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
 
+import org.apache.commons.fileupload.FileItem;
 import org.sakaiproject.authz.api.Role;
 import org.sakaiproject.entity.api.EntityProducer;
 import org.sakaiproject.memory.api.Cache;
@@ -87,4 +88,6 @@ public interface SakaiProxy {
     public boolean isUserSite(String siteId);
 
     public void addObserver(Observer observer);
+
+    public String storeFile(FileItem fileItem, String siteId);
 }
